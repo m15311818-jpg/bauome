@@ -7,6 +7,9 @@
     <!-- خط كايرو والأيقونات الاحترافية -->
     <link href="https://googleapis.com" rel="stylesheet">
     <link rel="stylesheet" href="https://cloudflare.com">
+    
+    <!-- مكتبة سيرفر الشات الحقيقي Ably (مضمونة ومستقرة جداً على جيت هوب والموبايل) -->
+    <script src="https://ably.com"></script>
 
     <style>
         :root {
@@ -48,7 +51,7 @@
         .chat-info { flex: 1; }
         .chat-name { font-weight: 600; font-size: 15px; display: block; }
 
-        /* منطقة المحادثة */
+        /* شاشة المحادثة */
         .chat-window { flex: 1; display: flex; flex-direction: column; background-color: var(--chat-bg); position: relative; }
         .chat-window::before { content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0.04; background-image: url('https://githubusercontent.com'); pointer-events: none; }
         .chat-header { height: 60px; background-color: var(--panel-bg); padding: 10px 16px; display: flex; align-items: center; z-index: 1; border-bottom: 1px solid var(--border-color); }
@@ -69,9 +72,9 @@
         .input-wrapper input { width: 100%; height: 42px; background-color: #2a3942; border: none; outline: none; border-radius: 8px; padding: 0 15px; color: var(--text-main); font-size: 15px; }
         .send-btn { background: transparent; border: none; cursor: pointer; color: var(--whatsapp-green); font-size: 22px; }
 
-        /* نافذة Pop-up */
+        /* نافذة إضافة صديق (Pop-up) */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 100; display: none; justify-content: center; align-items: center; }
-        .modal-box { background: var(--panel-bg); padding: 25px; border-radius: 12px; width: 320px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); text-align: center; }
+        .modal-box { background: var(--panel-bg); padding: 25px; border-radius: 12px; width: 320px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
         .modal-box h3 { margin-bottom: 15px; color: var(--whatsapp-green); }
         .modal-box input { width: 100%; padding: 10px; margin-bottom: 12px; border: 1px solid var(--border-color); background: #2a3942; color: #fff; border-radius: 6px; outline: none; }
         .modal-btns { display: flex; gap: 10px; justify-content: center; }
@@ -91,14 +94,14 @@
 </head>
 <body>
 
-    <!-- شاشة تسجيل الدخول -->
+    <!-- شاشة تسجيل الدخول المباشرة برقم الهاتف -->
     <div class="login-screen" id="loginScreen">
         <div class="login-box">
             <i class="fa-brands fa-whatsapp"></i>
             <h3>مرحباً بك في Bauome WhatsApp</h3>
-            <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 15px;">أدخل رقم تليفونك لتفعيل شات جوجل السحابي</p>
+            <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 15px;">أدخل رقم تليفونك لتشغيل الشات الحي فوراً</p>
             <input type="tel" id="myPhoneInput" placeholder="رقم تليفونك (مثال: 01012345678)">
-            <button id="loginBtn">دخول وتفعيل التطبيق</button>
+            <button onclick="loginUser()">دخول وتفعيل التطبيق</button>
         </div>
     </div>
 
@@ -108,7 +111,7 @@
             <div class="sidebar-header">
                 <div class="sidebar-actions">
                     <span style="font-weight: bold;">Bauome WhatsApp</span>
-                    <button class="add-friend-btn" id="openModalBtn">+ إضافة صديق</button>
+                    <button class="add-friend-btn" onclick="openModal()">+ إضافة صديق</button>
                 </div>
                 <div class="my-id-tag">رقمك الحالي: <span id="myPeerId"></span></div>
             </div>
@@ -124,7 +127,7 @@
             </div>
 
             <div class="chat-header" id="chatHeader" style="display: none;">
-                <i class="fa-solid fa-arrow-right back-btn" id="backBtn"></i>
+                <i class="fa-solid fa-arrow-right back-btn" onclick="backToSidebar()"></i>
                 <div class="chat-avatar" style="width: 38px; height: 38px; margin-left: 10px;"><i class="fa-solid fa-user"></i></div>
                 <div>
                     <div class="current-chat-name" id="currentChatName">اسم الصديق</div>
@@ -137,7 +140,7 @@
                 <div class="input-wrapper">
                     <input type="text" id="messageInput" placeholder="اكتب رسالة...">
                 </div>
-                <button class="send-btn" id="sendBtn">
+                <button class="send-btn" onclick="sendMessage()">
                     <i class="fa-solid fa-paper-plane"></i>
                 </button>
             </div>
@@ -147,7 +150,5 @@
     <div class="modal-overlay" id="friendModal">
         <div class="modal-box">
             <h3>إضافة صديق جديد</h3>
-            <input type="text" id="friendNameInput" placeholder="اسم الصديق">
-            <input type="tel" id="friendIdInput" placeholder="رقم تليفون الصديق">
-            <div class="modal-btns">
-                <button class="btn-confirm" id="saveFriendBtn">تم</button>
+
+            
