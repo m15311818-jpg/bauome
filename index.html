@@ -7,10 +7,6 @@
     <!-- خط كايرو والأيقونات الاحترافية -->
     <link href="https://googleapis.com" rel="stylesheet">
     <link rel="stylesheet" href="https://cloudflare.com">
-    
-    <!-- تم إصلاح روابط Firebase السحابية من جوجل هنا لتعمل بدون أي حظر -->
-    <script src="https://gstatic.com"></script>
-    <script src="https://gstatic.com"></script>
 
     <style>
         :root {
@@ -52,7 +48,7 @@
         .chat-info { flex: 1; }
         .chat-name { font-weight: 600; font-size: 15px; display: block; }
 
-        /* المحادثة */
+        /* منطقة المحادثة */
         .chat-window { flex: 1; display: flex; flex-direction: column; background-color: var(--chat-bg); position: relative; }
         .chat-window::before { content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0.04; background-image: url('https://githubusercontent.com'); pointer-events: none; }
         .chat-header { height: 60px; background-color: var(--panel-bg); padding: 10px 16px; display: flex; align-items: center; z-index: 1; border-bottom: 1px solid var(--border-color); }
@@ -95,14 +91,14 @@
 </head>
 <body>
 
-    <!-- شاشة تسجيل الدخول برقم الهاتف -->
+    <!-- شاشة تسجيل الدخول -->
     <div class="login-screen" id="loginScreen">
         <div class="login-box">
             <i class="fa-brands fa-whatsapp"></i>
             <h3>مرحباً بك في Bauome WhatsApp</h3>
             <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 15px;">أدخل رقم تليفونك لتفعيل شات جوجل السحابي</p>
             <input type="tel" id="myPhoneInput" placeholder="رقم تليفونك (مثال: 01012345678)">
-            <button onclick="loginUser()">دخول وتفعيل التطبيق</button>
+            <button id="loginBtn">دخول وتفعيل التطبيق</button>
         </div>
     </div>
 
@@ -112,7 +108,7 @@
             <div class="sidebar-header">
                 <div class="sidebar-actions">
                     <span style="font-weight: bold;">Bauome WhatsApp</span>
-                    <button class="add-friend-btn" onclick="openModal()">+ إضافة صديق</button>
+                    <button class="add-friend-btn" id="openModalBtn">+ إضافة صديق</button>
                 </div>
                 <div class="my-id-tag">رقمك الحالي: <span id="myPeerId"></span></div>
             </div>
@@ -128,7 +124,7 @@
             </div>
 
             <div class="chat-header" id="chatHeader" style="display: none;">
-                <i class="fa-solid fa-arrow-right back-btn" onclick="backToSidebar()"></i>
+                <i class="fa-solid fa-arrow-right back-btn" id="backBtn"></i>
                 <div class="chat-avatar" style="width: 38px; height: 38px; margin-left: 10px;"><i class="fa-solid fa-user"></i></div>
                 <div>
                     <div class="current-chat-name" id="currentChatName">اسم الصديق</div>
@@ -141,7 +137,7 @@
                 <div class="input-wrapper">
                     <input type="text" id="messageInput" placeholder="اكتب رسالة...">
                 </div>
-                <button class="send-btn" onclick="sendMessage()">
+                <button class="send-btn" id="sendBtn">
                     <i class="fa-solid fa-paper-plane"></i>
                 </button>
             </div>
@@ -150,3 +146,8 @@
 
     <div class="modal-overlay" id="friendModal">
         <div class="modal-box">
+            <h3>إضافة صديق جديد</h3>
+            <input type="text" id="friendNameInput" placeholder="اسم الصديق">
+            <input type="tel" id="friendIdInput" placeholder="رقم تليفون الصديق">
+            <div class="modal-btns">
+                <button class="btn-confirm" id="saveFriendBtn">تم</button>
